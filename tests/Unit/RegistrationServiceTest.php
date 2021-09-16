@@ -18,14 +18,15 @@ class RegistrationServiceTest extends TestCase
 
         User::factory()->create();
 
-        self::assertNotNull(RegistrationService::registerUser(
-            'titus',
-            'philemon',
-            '123456789',
-            'testing@gmail',
-            'opic lagos',
-            'testing@gmail'
-        )
+        self::assertNotNull(
+            RegistrationService::registerUser(
+                'titus',
+                'philemon',
+                '123456789',
+                'testing@gmail',
+                'opic lagos',
+                'testing@gmail'
+            )
         );
 
     }

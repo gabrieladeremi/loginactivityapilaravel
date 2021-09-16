@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginRecordsService
 {
-    public static function fetchUserLoginRecords()
+    public static function fetchUserLoginRecords(String $currentUserId)
     {
-        $currentUserId = Auth::id();
-
         $userLoginRecords = (array) DB::table('login_records')
                             ->where('user_id', $currentUserId)
                             ->get();

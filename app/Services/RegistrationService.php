@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Events\NewUserRegisteredEvent;
 use App\Exceptions\RegistrationFailedException;
+use App\Exceptions\UserExistException;
 use App\Models\User;
-use http\Exception\RuntimeException;
+use App\Support\RegistrationResponse;
+use Illuminate\Support\Facades\Hash;
 
 class RegistrationService
 {
@@ -16,7 +19,14 @@ class RegistrationService
         string $address,
         string $password
 
-    ): User {
+    ): RegistrationResponse {
+
+        if (User::where('email', $email)->first()) {
+
+            throw UserExistException::userExistException(
+                'A user with this email already exist, '
+            );
+        }
 
         $instantiateUser = new User();
         $instantiateUser->firstname = $firstname;
@@ -24,12 +34,10 @@ class RegistrationService
         $instantiateUser->email = $email;
         $instantiateUser->phoneNumber = $phoneNumber;
         $instantiateUser->address = $address;
-        $instantiateUser->password = $password;
+        $instantiateUser->password = Hash::make($password);
 
         $wasUserCreated = $instantiateUser->save();
 
-        // Need to write against this logic to know if a user was created or not
-        // if not found throw an exception
         if ($wasUserCreated === null) {
 
             throw RegistrationFailedException::failToRegister('Fail to register user');
@@ -40,10 +48,12 @@ class RegistrationService
         // Test to check if the user was fetched successfully
         if ($user === null) {
 
-            throw new RuntimeException('Issues retrieving user profile information');
+            throw new \RuntimeException('Issues retrieving user profile information');
         }
 
-        return $user;
+        event(new NewUserRegisteredEvent($user));
+
+        return new RegistrationResponse($user);
     }
 
 }

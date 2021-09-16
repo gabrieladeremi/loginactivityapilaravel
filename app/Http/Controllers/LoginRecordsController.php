@@ -11,10 +11,11 @@ class LoginRecordsController
 {
     public function records(): JsonResponse
     {
+        $currentUserId = Auth::id();
 
         try{
 
-            $loginRecords = LoginRecordsService::fetchUserLoginRecords();
+            $loginRecords = LoginRecordsService::fetchUserLoginRecords($currentUserId);
 
             return response()->json([
 

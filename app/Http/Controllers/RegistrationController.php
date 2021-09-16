@@ -30,22 +30,20 @@ class RegistrationController extends Controller
 
         try {
 
-            $user = RegistrationService::registerUser(
+            $registrationResponse = RegistrationService::registerUser(
                 firstname: $validatedData['firstname'],
                 lastname: $validatedData['lastname'],
                 phoneNumber: $validatedData['phoneNumber'],
                 email: $validatedData['email'],
                 address: $validatedData['address'],
-                password: bcrypt($validatedData['confirmPassword']),
+                password: $validatedData['confirmPassword'],
 
             );
 
-            $accessToken = $user->createToken('authToken')->accessToken;
-
             return response()->json([
 
-                'user' => $user,
-                'token' => $accessToken
+                'user' => $registrationResponse->user,
+                'token' => $registrationResponse->token,
 
             ], ResponseAlias::HTTP_CREATED);
 
