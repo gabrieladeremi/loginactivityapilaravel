@@ -41,30 +41,22 @@ class RegistrationController extends Controller
             );
 
             return response()->json([
-
                 'user' => $registrationResponse->user,
                 'token' => $registrationResponse->token,
-
             ], ResponseAlias::HTTP_CREATED);
 
         } catch (RegistrationFailedException $exception) {
 
             return response()->json([
-
                 'status' => $exception->getCode(),
-
                 'message' => $exception->getMessage()
-
             ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
 
         } catch (\Throwable $e) {
 
             return response()->json([
-
                 'status' => $e->getCode(),
-
                 'message' => $e->getMessage()
-
             ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

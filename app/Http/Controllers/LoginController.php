@@ -25,30 +25,20 @@ class LoginController extends Controller
 
             $validatedUser = LoginService::loginUser($validatedInput);
 
-            return response()->json([
-
-                'user' => $validatedUser
-
-            ], ResponseAlias::HTTP_OK);
+            return response()->json(['user' => $validatedUser], ResponseAlias::HTTP_OK);
 
         } catch (LoginException $e) {
 
             return response()->json([
-
                 'status' => $e->getCode(),
-
                 'message' => $e->getMessage()
-
             ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
 
         } catch (\Throwable $e) {
 
             return response()->json([
-
                 'status' => $e->getCode(),
-
                 'message' => $e->getMessage()
-
             ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

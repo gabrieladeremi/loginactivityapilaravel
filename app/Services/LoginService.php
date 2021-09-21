@@ -2,26 +2,25 @@
 
 namespace App\Services;
 
-use App\Exceptions\LoginException;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\DB;
 
 class LoginService
 {
     public static function loginUser(Array $input): array
     {
-
         $retrieveSavedUser = User::where('email', $input['email'])->first();
 
-        if( !$retrieveSavedUser ){
+        if (!$retrieveSavedUser) {
 
-            throw LoginException::noUserFoundException('No user found with the credential');
+            throw new AuthenticationException('No account found with credential');
         }
 
-        if(! Auth()->attempt($input))
-        {
-            return response(['message' => 'invalid credentials'], 403);
+        if (! Auth()->attempt($input)) {
+
+            throw new AuthenticationException('No account found with credential');
         }
 
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
@@ -32,10 +31,6 @@ class LoginService
             'last_seen' => Carbon::now()
         ]);
 
-        return [
-            'user' => auth()->user(),
-            'access token' => $accessToken
-        ];
-
+        return ['user' => auth()->user(), 'access_token' => $accessToken];
     }
 }

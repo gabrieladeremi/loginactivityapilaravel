@@ -18,37 +18,26 @@ class RegistrationService
         string $email,
         string $address,
         string $password
-
     ): RegistrationResponse {
 
-        if (User::where('email', $email)->first()) {
+        if (User::where('email', $email)->count() > 0 ) {
 
-            throw UserExistException::userExistException(
-                'A user with this email already exist, '
-            );
+            throw UserExistException::userExistException('An account exist with this email');
         }
 
-        $instantiateUser = new User();
-        $instantiateUser->firstname = $firstname;
-        $instantiateUser->lastname = $lastname;
-        $instantiateUser->email = $email;
-        $instantiateUser->phoneNumber = $phoneNumber;
-        $instantiateUser->address = $address;
-        $instantiateUser->password = Hash::make($password);
+        $user = User::create([
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'email' => $email,
+            'phoneNumber' => $phoneNumber,
+            'address' => $address,
+            'password' => Hash::make($password),
+        ]);
 
-        $wasUserCreated = $instantiateUser->save();
-
-        if ($wasUserCreated === null) {
+        if ($user === null) {
 
             throw RegistrationFailedException::failToRegister('Fail to register user');
 
-        }
-
-        $user = User::where('email', $email)->first();
-        // Test to check if the user was fetched successfully
-        if ($user === null) {
-
-            throw new \RuntimeException('Issues retrieving user profile information');
         }
 
         event(new NewUserRegisteredEvent($user));
